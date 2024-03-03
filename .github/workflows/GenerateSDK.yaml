@@ -7,7 +7,7 @@ on:
       - Specification/authservice.yaml
 
 jobs:
-  push_to_another_repo:
+  generate_sdk_push_to_its_repo:
     runs-on: ubuntu-latest
 
     steps:
