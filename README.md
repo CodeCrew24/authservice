@@ -16,7 +16,7 @@ This API provides endpoints for user registration, login, and client credential 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/dprakash2101/authservice
+git clone https://github.com/CodeCrew24/authservice
 ```
 
 2. Install Dependencies
@@ -56,7 +56,7 @@ For detailed information on each endpoint, refer to the [Swagger Documentation](
 You can view the Swagger documentation for this API by visiting the following URL:
 
 ```bash
-http://localhost:3000/api-docs
+https://auth-service-latest.onrender.com
 ```
 # License
 
