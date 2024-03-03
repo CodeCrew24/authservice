@@ -1,0 +1,105 @@
+name: Generate SDK and Push SDK to its respective repository
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - Specification/authservice.yaml
+
+jobs:
+  push_to_another_repo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install OpenAPI Generator
+        run: |
+          npm install -g @openapitools/openapi-generator-cli@latest
+      - name: Generate C# SDK
+        run: |
+          openapi-generator-cli generate -i authservice.yaml -g csharp -o ${{ github.workspace }}/csharpsdk --package-name authservice --library httpclient
+
+      - name: Configure Git for C# SDK
+        run: |
+            git config --local user.email ${{secrets.ADM_EMAIL}}
+            git config --local user.name ${{secrets.ADM_NAME}}
+
+      - name: Push C# SDK to Another Repository
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.SDK_TOKEN }}
+        with:
+          source-directory: 'csharpsdk'
+          destination-github-username: 'CodeCrew24'
+          destination-repository-name: 'authservice_csharp'
+          user-email: ${{secrets.ADM_EMAIL}}
+          target-branch: 'feature'
+          create-target-branch-if-needed: true
+
+      - name: Generate JavaScript SDK
+        run: |
+          openapi-generator-cli generate --verbose -i authservice.yaml -g javascript -o ${{ github.workspace }}/javascriptsdk 
+
+      - name: Configure Git for JavaScript SDK
+        run: |
+            git config --local user.email ${{secrets.ADM_EMAIL}}
+            git config --local user.name ${{secrets.ADM_NAME}}
+
+      - name: Push JavaScript SDK to Another Repository
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.SDK_TOKEN }}
+        with:
+          source-directory: 'javascriptsdk'
+          destination-github-username: CodeCrew24'
+          destination-repository-name: 'authservice_javascript'
+          user-email: ${{secrets.ADM_EMAIL}}
+          target-branch: 'feature'
+          create-target-branch-if-needed: true
+
+
+
+      - name: Generate Python SDK
+        run: |
+          openapi-generator-cli generate --verbose -i authservice.yaml -g python -o ${{ github.workspace }}/pythonsdk --package-name authservice
+
+      - name: Configure Git for Python SDK
+        run: |
+            git config --local user.email ${{secrets.ADM_EMAIL}}
+            git config --local user.name ${{secrets.ADM_NAME}}
+
+      - name: Push Python SDK to Another Repository
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.SDK_TOKEN }}
+        with:
+          source-directory: 'pythonsdk'
+          destination-github-username: CodeCrew24'
+          destination-repository-name: 'authservice_python'
+          user-email: ${{secrets.ADM_EMAIL}}
+          target-branch: 'feature'
+          create-target-branch-if-needed: true
+
+      - name: Generate Java SDK
+        run: |
+            openapi-generator-cli generate --verbose -i authservice.yaml -g java -o ${{ github.workspace }}/javasdk --artifact-id auth --group-id service --api-package authservice.client.api --model-package authservice.client.model --additional-properties disallowAdditionalPropertiesIfNotPresent=true
+  
+  
+      - name: Configure Git for Java SDK
+        run: |
+            git config --local user.email ${{secrets.ADM_EMAIL}}
+            git config --local user.name ${{secrets.ADM_NAME}}
+  
+      - name: Push Java SDK to Another Repository
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+            API_TOKEN_GITHUB: ${{ secrets.SDK_TOKEN }}
+        with:
+            source-directory: 'javasdk'
+            destination-github-username: CodeCrew24'
+            destination-repository-name: 'authservice_java'
+            user-email: ${{secrets.ADM_EMAIL}}
+            target-branch: 'feature'
+            create-target-branch-if-needed: true
