@@ -56,7 +56,7 @@ For detailed information on each endpoint, refer to the [Swagger Documentation](
 You can view the Swagger documentation for this API by visiting the following URL:
 
 ```bash
-https://auth-service-latest.onrender.com
+https://auth-service-latest.onrender.com/api-docs
 ```
 # License
 
