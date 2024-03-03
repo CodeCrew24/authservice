@@ -2,7 +2,14 @@ name: Deploy
 
 on:
   push:
-    
+    branches:
+      - 1-create-cicd-pipe-line-for-deployment
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
 
 jobs:
   inital-job:
