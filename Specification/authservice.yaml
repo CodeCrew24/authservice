@@ -3,6 +3,7 @@ info:
   version: "1.0.0"
   title: Auth Service
   description: This API provides token-based authentication for user registration, login, and client credential management. It ensures secure communication by utilizing tokens for authentication. Users can register with unique usernames and passwords, authenticate using client credentials, retrieve client IDs and secrets, and regenerate client credentials as needed. The API supports various user roles, including 'user', 'admin', 'moderator', 'guest', and 'superadmin'.
+servers:
   - url: http://localhost:3000/auth
 paths:
   /register:
@@ -37,7 +38,6 @@ paths:
               - guest
               - superadmin
           example: user
-
       responses:
         '201':
           description: User registered successfully
