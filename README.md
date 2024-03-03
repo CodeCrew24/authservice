@@ -22,7 +22,7 @@ git clone https://github.com/dprakash2101/authservice
 2. Install Dependencies
 
 ```bash
-cd auth-api
+cd authservice
 npm install
 ```
 
