@@ -10,7 +10,7 @@
       "url": "http://localhost:3000/auth"
     },
     {
-      "url": "https://auth-service-latest.onrender.com/"
+      "url": "https://auth-service-latest.onrender.com/auth"
     }
   ],
   "paths": {
