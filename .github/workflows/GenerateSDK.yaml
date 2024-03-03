@@ -76,7 +76,7 @@ jobs:
           API_TOKEN_GITHUB: ${{ secrets.SDK_TOKEN }}
         with:
           source-directory: 'pythonsdk'
-          destination-github-username: CodeCrew24'
+          destination-github-username: 'CodeCrew24'
           destination-repository-name: 'authservice_python'
           user-email: ${{secrets.ADM_EMAIL}}
           target-branch: 'feature'
@@ -98,7 +98,7 @@ jobs:
             API_TOKEN_GITHUB: ${{ secrets.SDK_TOKEN }}
         with:
             source-directory: 'javasdk'
-            destination-github-username: CodeCrew24'
+            destination-github-username: 'CodeCrew24'
             destination-repository-name: 'authservice_java'
             user-email: ${{secrets.ADM_EMAIL}}
             target-branch: 'feature'
