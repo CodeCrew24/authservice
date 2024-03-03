@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const winston = require('winston');
 const expressWinston = require('express-winston');
 const dotenv = require('dotenv');
+const cors = require('cors')
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const authRoutes = require('./routes/authRoutes');
@@ -14,6 +15,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware for logging
 app.use(express.json());
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(expressWinston.logger({
   transports: [
