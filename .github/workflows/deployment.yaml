@@ -97,11 +97,12 @@ jobs:
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           # email subject
-          subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
+          subject: Actions-ALERTS--${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
           # email body as text
           body: ${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
           # comma-separated string, send email to
           to: vijay.saravanan0707@gmail.com, dprakash2101@gmail.com
           # from email name
-          from: CodeCrew24
+          from: codecrew032024@gmail.com
+
   
