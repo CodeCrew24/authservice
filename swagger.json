@@ -1,0 +1,372 @@
+{
+    "openapi" : "3.0.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "Auth API",
+      "description": "API for user registration, login, and client credential management, using headers for all input parameters"
+    },
+    "servers": [
+      { "url": "http://localhost:3000/auth" }
+    ],
+    "paths": {
+      "/register": {
+        "post": {
+          "summary": "Registers a new user",
+          "description": "Creates a new user with the provided username, password, and optional role. Returns the generated client ID and client secret in the response.",
+          "parameters": [
+            {
+              "name": "username",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "description": "Unique username for the user",
+              "example": "johndoe"
+            },
+            {
+              "name": "password",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "description": "User's password",
+              "example": "password123"
+            },
+            {
+                "name": "role",
+                "in": "header",
+                "required": false,
+                "type": "string",
+                "description": "User's role (optional, defaults to 'user'). Choose from the provided options: 'user', 'admin', 'moderator', 'guest', 'superadmin'.",
+                "example": "user",
+                "enum": [
+                  "user",
+                  "admin",
+                  "moderator",
+                  "guest",
+                  "superadmin"
+                ]
+              }
+          ],
+          "responses": {
+            "201": {
+              "description": "User registered successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "description": "Success message",
+                        "example": "User registered successfully"
+                      },
+                      "clientId": {
+                        "type": "string",
+                        "description": "Generated client ID",
+                        "example": "abc123-xyz456"
+                      },
+                      "clientSecret": {
+                        "type": "string",
+                        "description": "Generated client secret",
+                        "example": "def789-ghi012"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad request (e.g., username already taken)",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "description": "Error message",
+                        "example": "Username is already taken"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string",
+                        "description": "Error message",
+                        "example": "Internal server error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/login/client": {
+        "post": {
+          "summary": "Logs in a user using client ID and secret",
+          "description": "Authenticates a user with the provided client ID and secret. Returns a JWT token, token type (Bearer), and expiry time in seconds.",
+          "parameters": [
+            {
+              "name": "clientId",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "description": "User's client ID",
+              "example": "abc123-xyz456"
+            },
+            {
+              "name": "clientSecret",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "description": "User's client secret",
+              "example": "def789-ghi012"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Login successful",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "token": {
+                        "type": "string",
+                        "description": "JWT token",
+                        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxMjM0NTY3ODkwIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                      },
+                      "token_type": {
+                        "type": "string",
+                        "description": "Type of token",
+                        "example": "Bearer"
+                      },
+                      "expires_in": {
+                        "type": "integer",
+                        "description": "Expiry time of token in seconds",
+                        "example": 3600
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized (invalid client credentials)",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "description": "Error message",
+                        "example": "Invalid client credentials"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string",
+                        "description": "Error message",
+                        "example": "Internal server error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/client": {
+        "get": {
+          "summary": "Get client ID and secret",
+          "description": "Returns the client ID and client secret of the user associated with the provided username and password.",
+          "parameters": [
+            {
+              "name": "username",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "description": "User's username",
+              "example": "johndoe"
+            },
+            {
+              "name": "password",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "description": "User's password",
+              "example": "password123"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Client ID and client secret retrieved successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "clientId": {
+                        "type": "string",
+                        "description": "User's client ID",
+                        "example": "abc123-xyz456"
+                      },
+                      "clientSecret": {
+                        "type": "string",
+                        "description": "User's client secret",
+                        "example": "def789-ghi012"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized (invalid credentials)",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "description": "Error message",
+                        "example": "Invalid credentials"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string",
+                        "description": "Error message",
+                        "example": "Internal server error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/regenerate-client-credentials": {
+        "post": {
+          "summary": "Regenerate client credentials",
+          "description": "Regenerates the client ID and client secret of the user associated with the provided username and password. Returns the new client ID and client secret in the response.",
+          "parameters": [
+            {
+              "name": "username",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "description": "User's username",
+              "example": "johndoe"
+            },
+            {
+              "name": "password",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "description": "User's password",
+              "example": "password123"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Client credentials regenerated successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "description": "Success message",
+                        "example": "Client credentials regenerated successfully"
+                      },
+                      "clientId": {
+                        "type": "string",
+                        "description": "New client ID",
+                        "example": "xyz789-abc456"
+                      },
+                      "clientSecret": {
+                        "type": "string",
+                        "description": "New client secret",
+                        "example": "ghi012-def789"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized (invalid credentials)",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "description": "Error message",
+                        "example": "Invalid credentials"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string",
+                        "description": "Error message",
+                        "example": "Internal server error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
