@@ -8,7 +8,7 @@ paths:
   /register:
     post:
       summary: Registers a new user
-      description: Creates a new user with the provided username, password, and optional role. Returns the generated client ID and client secret in the response.
+      description: Creates a new user with the provided username, password, and role. Returns the generated client ID and client secret in the response.
       parameters:
         - name: username
           in: header
