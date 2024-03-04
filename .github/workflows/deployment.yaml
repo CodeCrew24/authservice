@@ -13,6 +13,11 @@ on:
 jobs:
   Test:
     runs-on: ubuntu-latest
+    env:
+      PORT: ${{ secrets.PORT }}
+      MONGODB_URI: ${{secrets.MONGODB_URI}}
+      JWT_SECRET: ${{secrets.JWT_SECRET}}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
