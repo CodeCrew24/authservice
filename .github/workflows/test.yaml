@@ -1,0 +1,22 @@
+name: Test
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install
+        run: npm install
+
+      - name: Run Lint
+        run: npm run lint-check
+
+      - name: Run tests
+        run: npm run test
