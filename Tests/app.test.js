@@ -42,19 +42,40 @@ describe("Register a new user", () => {
     );
   });
 
-  // it("should return 500 if registration fails due to server error", async () => {
-  //   // Intentionally trigger a server error by not providing required data
-  //   const response = await request(app).post("/auth/register").send({});
+  it("should return 500 if registration fails due to server error", async () => {
+    // Intentionally trigger a server error by not providing required data
+    const response = await request(app).post("/auth/register").set({});
 
-  //   expect(response.status).toBe(500);
-  //   expect(response.body).toHaveProperty("error");
-  // });
+    expect(response.status).toBe(500);
+    expect(response.body).toHaveProperty("error");
+  });
 });
 
 describe("Login with creds", () => {
   beforeEach(async () => {
     // Clear the user collection before each test
     await User.deleteMany({});
+  });
+
+  it("Should return token and expiry if clientId and clientSecret are valid", async () => {
+    // Create a user with known credentials
+    await User.create({
+      username: "test_user",
+      password: await bcrypt.hash("test_password", 10),
+      role: "user",
+      clientId: "test_client_id",
+      clientSecret: "test_client_secret",
+    });
+
+    const response = await request(app)
+      .post("/auth/login/client")
+      .set("clientId", "test_client_id")
+      .set("clientSecret", "test_client_secret");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("token");
+    expect(response.body).toHaveProperty("token_type");
+    expect(response.body).toHaveProperty("expires_in");
   });
 
   it("should return 401 if login with invalid client credentials", async () => {
@@ -69,22 +90,6 @@ describe("Login with creds", () => {
       "Invalid client credentials"
     );
   });
-
-  // it("should return 500 if login fails due to server error", async () => {
-  //   // Intentionally trigger a server error by not providing required data
-  //   const response = await request(app).post("/auth/login/client").send({});
-
-  //   expect(response.status).toBe(500);
-  //   expect(response.body).toHaveProperty("error");
-  // });
-
-  // it("should return 500 if client ID and secret retrieval fails due to server error", async () => {
-  //   // Intentionally trigger a server error by not providing required data
-  //   const response = await request(app).get("/auth/client").send({});
-
-  //   expect(response.status).toBe(500);
-  //   expect(response.body).toHaveProperty("error");
-  // });
 });
 
 describe("Regenerate client creds", () => {
@@ -92,27 +97,27 @@ describe("Regenerate client creds", () => {
     // Clear the user collection before each test
     await User.deleteMany({});
   });
-  // it("should regenerate client credentials if credentials are valid", async () => {
-  //   // Create a user with known credentials
-  //   const user = await User.create({
-  //     username: "test_user",
-  //     password: await bcrypt.hash("test_password", 10),
-  //     role: "user",
-  //     clientId: "old_client_id",
-  //     clientSecret: "old_client_secret",
-  //   });
+  it("should regenerate client credentials if credentials are valid", async () => {
+    // Create a user with known credentials
+    await User.create({
+      username: "test_user",
+      password: await bcrypt.hash("test_password", 10),
+      role: "user",
+      clientId: "old_client_id",
+      clientSecret: "old_client_secret",
+    });
 
-  //   const response = await request(app)
-  //     .post("/auth/regenerate-client-credentials")
-  //     .set("username", "test_user")
-  //     .set("password", "test_password");
+    const response = await request(app)
+      .post("/auth/regenerate-client-credentials")
+      .set("username", "test_user")
+      .set("password", "test_password");
 
-  //   expect(response.status).toBe(200);
-  //   expect(response.body).toHaveProperty("clientId");
-  //   expect(response.body).toHaveProperty("clientSecret");
-  //   expect(response.body.clientId).not.toBe("old_client_id");
-  //   expect(response.body.clientSecret).not.toBe("old_client_secret");
-  // });
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("clientId");
+    expect(response.body).toHaveProperty("clientSecret");
+    expect(response.body.clientId).not.toBe("old_client_id");
+    expect(response.body.clientSecret).not.toBe("old_client_secret");
+  });
 
   it("should return 401 if credentials are invalid when regenerating client credentials", async () => {
     const response = await request(app)
@@ -123,16 +128,6 @@ describe("Regenerate client creds", () => {
     expect(response.status).toBe(401);
     expect(response.body).toHaveProperty("message", "Invalid credentials");
   });
-
-  // it("should return 500 if client credentials regeneration fails due to server error", async () => {
-  //   // Intentionally trigger a server error by not providing required data
-  //   const response = await request(app)
-  //     .post("/auth/regenerate-client-credentials")
-  //     .send({});
-
-  //   expect(response.status).toBe(500);
-  //   expect(response.body).toHaveProperty("error");
-  // });
 });
 
 describe("Get User creds", () => {
@@ -158,5 +153,24 @@ describe("Get User creds", () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("clientId", "test_client_id");
     expect(response.body).toHaveProperty("clientSecret", "test_client_secret");
+  });
+
+  it("should return 401 if login with invalid user credentials", async () => {
+    // Create a user with known credentials
+    const user = await User.create({
+      username: "test_user",
+      password: await bcrypt.hash("test_password", 10),
+      role: "user",
+      clientId: "test_client_id",
+      clientSecret: "test_client_secret",
+    });
+
+    const response = await request(app)
+      .get("/auth/client")
+      .set("username", "test_user1")
+      .set("password", "test_password1");
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message", "Invalid credentials");
   });
 });
