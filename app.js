@@ -13,7 +13,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware for logging
+// Middleware for logging HTTP requests and responses
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
@@ -31,6 +31,16 @@ app.use(
     msg: "HTTP {{req.method}} {{req.url}}",
     expressFormat: true,
     colorize: false,
+    // Customize logging to include user-specific logs
+    dynamicMeta: (req, res) => {
+      return {
+        userId: req.user ? req.user.id : "anonymous",
+        requestBody: req.body,
+        queryParameters: req.query,
+        responseStatus: res.statusCode,
+        responseBody: res.body,
+      };
+    },
   })
 );
 
